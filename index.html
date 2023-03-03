@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="ssheet.css" />
+    <script src="vue.js"></script>
+    <title>Lista de pendientes</title>
+  </head>
+  <style>
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    h1 {
+      padding-top: 40px;
+    }
+  </style>
+  </head>
+  <body>
+    <div id="app" class="container">
+      <h1>Lista de pendientes</h1>
+
+      <div v-if="!isEditing">
+        <input type="text" v-model="todo" />
+        <input type="submit" value="añadir" @click="storeTodo" />
+      </div>
+      <div v-else>
+        <input type="text" v-model="todo" />
+        <input type="submit" value="Update" @click="updateTodo" />
+      </div>
+
+      <ol>
+        <li v-for="(todo, index) in todos">
+          {{ todo }}
+          <button @click="editTodo(index, todo)">Edit</button>
+          <button @click="moveToCompletadasList(index)">completar</button>
+        </li>
+      </ol>
+      <button v-if="CompletadasTodos.length > 0" @click="showCompletadasList = !showCompletadasList">
+        {{ showCompletadasList ? "Ocultar tareas completadas" : "Mostrar tareas completadas" }}
+      </button>
+      <ul v-if="showCompletadasList">
+        <li v-for="(todo, index) in CompletadasTodos">{{ todo }}</li>
+      </ul>
+      <button v-if="CompletadasTodos.length > 0" @click="emptyCompletadasList">
+        Vaciar lista de tareas completadas
+      </button>
+    </div>
+
+    <script src="<https://cdn.jsdelivr.net/npm/vue@2.6.12>"></script>
+    <script>
+      new Vue({
+        el: "#app",
+
+        data: {
+          isEditing: false,
+          todo: "",
+          todos: [],
+          selectedTodo: null,
+          CompletadasTodos: [],
+          showCompletadasList: false,
+        },
+
+        methods: {
+            storeTodo() {
+                if (this.todo.trim() !== '') {
+                    this.todos.push(this.todo)
+                    this.todo = ''
+                }
+            },
+
+          removeTodo(index) {
+            this.CompletadasTodos.push(this.todos[index]);
+            this.todos.splice(index, 1);
+          },
+
+          updateTodo() {
+            this.todos.splice(this.selectedIndex, 1, this.todo);
+            this.todo = "";
+            this.isEditing = false;
+          },
+
+          editTodo(index, todo) {
+            this.isEditing = true;
+            this.todo = todo;
+            this.selectedIndex = index;
+          },
+
+          moveToCompletadasList(index) {
+            this.CompletadasTodos.push(this.todos[index]);
+            this.todos.splice(index, 1);
+          },
+
+          emptyCompletadasList() {
+            this.CompletadasTodos = [];
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
